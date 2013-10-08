@@ -28,11 +28,11 @@ class Parser<A> {
 	}
 	
 	static public function parse(source, ?pos) 
-		return parse(source, {
+		return parseWith(source, {
 			not: function (s) return Success(Not(s)),
 			nth: function (matchType, factor, offset, backward) return Success(Nth(matchType, factor, offset, backward)),
 			custom: function (name, _) return Failure('Unknown pseudo class :$name')
-		});
+		}, pos);
 	
 	
 	static public function parseWith<A>(source, pseudos:Plugin<A>, ?pos):Outcome<Selector<A>, Error>
