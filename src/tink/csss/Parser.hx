@@ -28,11 +28,11 @@ class Parser<A> {
 	}
 	
 	static public function parse(source, ?pos) 
-		return parse(source, {
+		return parseWith(source, {
 			not: function (s) return Success(Not(s)),
 			nth: function (matchType, factor, offset, backward) return Success(Nth(matchType, factor, offset, backward)),
 			custom: function (name, _) return Failure('Unknown pseudo class :$name')
-		});
+		}, pos);
 	
 	
 	static public function parseWith<A>(source, pseudos:Plugin<A>, ?pos):Outcome<Selector<A>, Error>
@@ -94,7 +94,7 @@ class Parser<A> {
 		return h.exists;
 	}
 	
-	static var IDENT_END = makeFilter('#*., =\t\r\n[]()+~>:|^$' + String.fromCharCode(0));
+	static var IDENT_END = makeFilter('#*., =\t\r\n[]()+~>:|^$!' + String.fromCharCode(0));
 	static var ALPHA = makeFilter('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
 	
 	function readWhile(filter) {
@@ -229,8 +229,11 @@ class Parser<A> {
 					
 					switch name {
 						case 'not': 
-							argCount(1);
-							add(pseudos.not(new Parser(args[0], pseudos, srcPos).parseAll()));
+							if (args.length == 0)
+								error(':not requires an argument');
+							add(pseudos.not([for (a in args)
+								new Parser(a, pseudos, srcPos).parseAll()[0]
+							]));
 							
 						case 'first-child': nth(false, 0, 1, false, 0);
 						case 'last-child': nth(false, 0, 1, true, 0);
@@ -242,6 +245,10 @@ class Parser<A> {
 						case 'even': nth(false, 2, 0, false, 0);
 						case complex if (CHILD_RULES.exists(complex)):
 							argCount(1);
+							function parse(s:String)
+								return 
+									if (s.startsWith('+')) parse(s.substr(1))
+									else Std.parseInt(s);//neko can't handle leading +
 							var progression = 
 								switch args[0] {
 									case 'odd': [2, 1];
@@ -252,12 +259,12 @@ class Parser<A> {
 											case [offset]:
 												if (offset == '') 
 													error('empty expression not accepted for $name');
-												[0, Std.parseInt(offset)];
+												[0, parse(offset)];
 											case [n, offset]:
 												if (n == '-') n = '-1';
 												else if (n == '') n = '1';
 												if (offset == '') offset = '0';
-												[Std.parseInt(n), Std.parseInt(offset)];
+												[parse(n), parse(offset)];
 											default: error('Cannot parse argument $v for $name');	
 										}
 								}
