@@ -61,8 +61,8 @@ For parsing, the library provides the following API:
 
 ```
 class Parser {
-	static public function parse(source:String, ?pos:Pos):Outcome<Selector<Pseudo>, Error>
-	static public function parseWith<A>(source:String, pseudos:Plugin<A>, ?pos:Pos):Outcome<Selector<A>, Error>
+	static function parse(source:String, ?pos:Pos):Outcome<Selector<Pseudo>, Error>
+	static function parseWith<A>(source:String, pseudos:Plugin<A>, ?pos:Pos):Outcome<Selector<A>, Error>
 }
 
 typedef Plugin<A> = {
