@@ -1,5 +1,6 @@
 package ;
 
+import js.Browser;
 import tink.csss.Selector;
 import tink.csss.Parser;
 import tink.core.Error;
@@ -131,8 +132,7 @@ class TestParser extends Base {
 	
 	function assertStructEq<A>(expected:A, found:A) {
 		function compare(e:Dynamic, f:Dynamic):Bool
-			return {
-				var ret = 
+			return 
 				switch Type.typeof(e) {
 					case TNull, TInt, TBool, TFloat, TUnknown, TClass(String): e == f;
 					case TObject:
@@ -159,7 +159,7 @@ class TestParser extends Base {
 									break;
 								}
 						ret;
-					case TClass(_) if (Std.is(e, Map.IMap)):
+					case TClass(_) if (Std.is(e, haxe.Constraints.IMap)):
 						var e:Map.IMap<Dynamic, Dynamic> = e,
 							f:Map.IMap<Dynamic, Dynamic> = f;
 							
@@ -181,10 +181,7 @@ class TestParser extends Base {
 					default:
 						throw 'assert';
 				}
-				if (ret == false)
-					js.Lib.alert([e, f]);
-				ret;
-			}	
+
 		if (compare(expected, found)) assertTrue(true);
 		else fail('expected something like $expected, found $found');
 	}

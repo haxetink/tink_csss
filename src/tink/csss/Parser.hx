@@ -13,8 +13,8 @@ typedef Plugin<A> = {
 }
 
 class Parser<A> {
-	var pos:Int;
-	var max:Int;
+	public var pos(default, null):Int;
+	public var max(default, null):Int;
 	var source:String;
 	var pseudos:Plugin<A>;
 	var srcPos:Pos;
@@ -33,7 +33,6 @@ class Parser<A> {
 			nth: function (matchType, factor, offset, backward) return Success(Nth(matchType, factor, offset, backward)),
 			custom: function (name, _) return Failure('Unknown pseudo class :$name')
 		}, pos);
-	
 	
 	static public function parseWith<A>(source, pseudos:Plugin<A>, ?pos):Outcome<Selector<A>, Error>
 		return 
@@ -91,7 +90,7 @@ class Parser<A> {
 	static function makeFilter(s:String) {
 		var h = new Map();
 		haxe.Utf8.iter(s, function (code:Int) h.set(code, true));
-		return h.exists;
+		return function (s) return h.exists(s);
 	}
 	
 	static var IDENT_END = makeFilter('#*., =\t\r\n[]()+~>:|^$!' + String.fromCharCode(0));
@@ -131,7 +130,7 @@ class Parser<A> {
 			else false;
 	}
 	function error(msg:String):Dynamic 
-		return throw mkError(msg);
+		return mkError(msg).throwSelf();
 	
 	function readString() {
 		var delim = read();
