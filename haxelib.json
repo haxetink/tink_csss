@@ -7,7 +7,7 @@
 	"version": "0.0.0-alpha.0",
 	"dependencies":{
 		"tink_lang":"tink_core"
-	}
+	},
 	"releasenote": "Initial release",
 	"contributors": ["back2dos"], 
 	"classPath": "src" 
