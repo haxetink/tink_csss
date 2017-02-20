@@ -1,7 +1,2 @@
--lib tink_core
--dce full
--cp src
 -cp tests
 -main Run
--js bin/tests.js
-#iota start bin\index.html
