@@ -1,6 +1,5 @@
 package ;
 
-import js.Browser;
 import tink.csss.Selector;
 import tink.csss.Parser;
 import tink.core.Error;
