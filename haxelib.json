@@ -2,11 +2,11 @@
 	"name": "tink_csss",
 	"url" : "http://haxetink.org/tink_csss",
 	"license": "MIT",
-	"tags": ["tink", "css", "selectors"],
+	"tags": ["tink", "css", "selectors", "cross"],
 	"description": "",
 	"version": "0.0.0-alpha.0",
 	"dependencies":{
-		"tink_lang":"tink_core"
+		"tink_core":""
 	},
 	"releasenote": "Initial release",
 	"contributors": ["back2dos"], 
