@@ -1,14 +1,21 @@
 {
 	"name": "tink_csss",
-	"url" : "http://haxetink.org/tink_csss",
 	"license": "MIT",
-	"tags": ["tink", "css", "selectors", "cross"],
+	"tags": [
+		"tink",
+		"css",
+		"selectors",
+		"cross"
+	],
+	"classPath": "src",
 	"description": "",
-	"version": "0.0.0-alpha.0",
-	"dependencies":{
-		"tink_core":""
-	},
-	"releasenote": "Initial release",
-	"contributors": ["back2dos"], 
-	"classPath": "src" 
+	"contributors": [
+		"back2dos"
+	],
+	"releasenote": "Initial haxelib release.",
+	"version": "0.1.0",
+	"url": "http://haxetink.org/tink_csss",
+	"dependencies": {
+		"tink_core": ""
+	}
 }
