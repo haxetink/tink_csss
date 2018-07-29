@@ -8,6 +8,7 @@ using StringTools;
 
 typedef Plugin<A> = {
   function not(s:Selector<A>):Outcome<A, String>;
+  function state(s:ElementState):Outcome<A, String>;
   function nth(matchType:Bool, factor:Int, offset:Int, backward:Bool):Outcome<A, String>;
   function custom(name:String, args:Array<String>):Outcome<A, String>;
 }
@@ -31,6 +32,7 @@ class Parser<A> {
     return parseWith(source, {
       not: function (s) return Success(Not(s)),
       nth: function (matchType, factor, offset, backward) return Success(Nth(matchType, factor, offset, backward)),
+      state: function (s) return Success(State(s)),
       custom: function (name, _) return Failure('Unknown pseudo class :$name')
     }, pos);
   
@@ -270,6 +272,8 @@ class Parser<A> {
                 
               var rule = CHILD_RULES.get(complex);
               nth(rule[0], progression[0], progression[1], rule[1]);
+            case Checked | Invalid | Valid | Focus | Hover:
+              add(pseudos.state(cast name));
             default:
               add(pseudos.custom(name, args));
           }

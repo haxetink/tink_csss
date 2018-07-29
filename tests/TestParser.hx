@@ -9,6 +9,7 @@ using tink.core.Outcome;
 private enum Pseudo {
 	Not(s:Selector<Pseudo>);
 	Nth(matchType:Bool, factor:Int, offset:Int, backward:Bool);
+	State(s:ElementState);
 	Custom(name:String, args:Array<String>);
 }
 
@@ -19,6 +20,7 @@ class TestParser extends Base {
 			{
 				not: function (selector) return Success(Not(selector)),
 				nth: function (matchType, factor, offset, backward) return Success(Nth(matchType, factor, offset, backward)),
+				state: function (s) return Success(State(s)),
 				custom: function (name, args) return Success(Custom(name, args))
 			}
 		);		
