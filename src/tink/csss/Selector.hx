@@ -37,7 +37,7 @@ enum AttrOperator {
 }
 
 enum Combinator {
-    Descendant;
+  Descendant;
 	Child;
 	AdjacentSibling;
 	GeneralSibling;
