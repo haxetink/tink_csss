@@ -17,7 +17,7 @@ typedef SelectorPart<A> = {
 typedef AttrFilter = {	
   var name:String;
   var value:String;
-  var operator:AttrOperator;
+  var op:AttrOperator;
 }
 
 enum Pseudo {

@@ -197,7 +197,7 @@ class Parser<A> {
               expect(']');
               s;
             }
-          part.attrs.push({ name: name, value: value, operator: op });
+          part.attrs.push({ name: name, value: value, op: op });
         case ':'.code:
           allow(':');
           var name = readIdent().sure();

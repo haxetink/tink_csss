@@ -50,7 +50,7 @@ class TestParser extends Base {
 		return {
 			name: name,
 			value: value,
-			operator: 
+			op: 
 				if (op != null) op
 				else if (value == null) None
 				else Exactly
