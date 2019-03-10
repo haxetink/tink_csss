@@ -16,6 +16,6 @@
 	"version": "0.1.0",
 	"url": "http://haxetink.org/tink_csss",
 	"dependencies": {
-		"tink_core": ""
+		"tink_parse": ""
 	}
 }

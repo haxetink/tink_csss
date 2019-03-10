@@ -1,0 +1,7 @@
+{
+  "name": "tink_csss",
+  "scripts": {
+    "postinstall": "lix download",
+    "test": "lix run travix interp"
+  }
+}

@@ -1,0 +1,4 @@
+tests.hxml
+-lib tink_csss
+-js out.js
+--no-output
