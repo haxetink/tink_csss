@@ -2,16 +2,8 @@ package tink.csss;
 
 import tink.csss.Selector;
 import tink.core.Error;
-
 using tink.core.Outcome;
 using StringTools;
-
-typedef Plugin = {
-  function not(s:Selector):Pseudo;
-  function state(s:ElementState):Pseudo;
-  function nth(matchType:Bool, factor:Int, offset:Int, backward:Bool):Pseudo;
-  function custom(name:String):Pseudo;
-}
 
 #if !macro
 private class RuntimeReporter implements tink.parse.Reporter.ReporterObject<Pos, Error> {
@@ -30,21 +22,9 @@ private class RuntimeReporter implements tink.parse.Reporter.ReporterObject<Pos,
 }
 #end
 class Parser<Position, Error> extends ParserBase<Position, Error> {
-  
-  var pseudos:Plugin;
-  
-  function new(pseudos, source, reporter, ?offset) {
-    super(source, reporter, offset);
-    this.pseudos = pseudos;
-  }
-  
+
   static public function parse(source, ?pos) 
-    return parseWith(source, {
-      not: Not, nth: Nth, state: State, custom: Custom,
-    }, pos);
-  
-  static public function parseWith<Pseudo>(source, pseudos:Plugin, ?pos):Outcome<Selector, Error>
-    return 
+    return
       try {
         #if macro
         if (pos == null)
@@ -56,7 +36,7 @@ class Parser<Position, Error> extends ParserBase<Position, Error> {
         var offset = 0;
         var reporter = new RuntimeReporter(pos);
         #end
-        var p = new Parser(pseudos, source, reporter, offset);
+        var p = new Parser(source, reporter, offset);
         var s = p.parseFullSelector();
         if (p.pos < p.source.length)
           p.die('expected selector end');
@@ -64,29 +44,30 @@ class Parser<Position, Error> extends ParserBase<Position, Error> {
           Success(s);
       }
       catch (e:Error) Failure(e);
+
   
   override function parsePseudo():Pseudo {
     allowHere(':');
     var name = ident().sure();
     return switch name.toString() {
       case 'not': 
-        expect('(') + pseudos.not(parseFullSelector()) + expect(')');
-      case 'first-child': pseudos.nth(false, 0, 1, false);
-      case 'last-child': pseudos.nth(false, 0, 1, true);
-      case 'first-of-type': pseudos.nth(true, 0, 1, false);
-      case 'last-of-type': pseudos.nth(true, 0, 1, true);
-      case 'only-child': pseudos.nth(false, 0, 0, false);
-      case 'only-of-type': pseudos.nth(true, 0, 0, false);
-      case 'odd': pseudos.nth(false, 2, 1, false);
-      case 'even': pseudos.nth(false, 2, 0, false);
-      case ElementState.ofString(_) => Success(state): pseudos.state(state);    
+        expect('(') + Not(parseFullSelector()) + expect(')');
+      case 'first-child': Nth(false, 0, 1, false);
+      case 'last-child': Nth(false, 0, 1, true);
+      case 'first-of-type': Nth(true, 0, 1, false);
+      case 'last-of-type': Nth(true, 0, 1, true);
+      case 'only-child': Nth(false, 0, 0, false);
+      case 'only-of-type': Nth(true, 0, 0, false);
+      case 'odd': Nth(false, 2, 1, false);
+      case 'even': Nth(false, 2, 0, false);
+      case ElementState.ofString(_) => Success(state): State(state);    
       case CHILD_RULES[_] => [matchType, backward]:
         expect('(');
         var sign = if (allow('-')) -1 else 1;
         
         function withFactor(factor:Int) 
           return 
-            pseudos.nth(
+            Nth(
               matchType, 
               sign * factor, 
               if (allow('-')) -parseInt().sure()
@@ -100,7 +81,7 @@ class Parser<Position, Error> extends ParserBase<Position, Error> {
         else {
           var i = parseInt(true).sure();
           if (allowHere('n')) withFactor(i);
-          else pseudos.nth(matchType, 0, i * sign, backward);
+          else Nth(matchType, 0, i * sign, backward);
         }) + expect(')');
       default: 
         reject(name);
