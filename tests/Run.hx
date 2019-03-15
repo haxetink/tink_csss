@@ -9,10 +9,21 @@ class Run {
 		new TestParser(),
 	];
 	
+	#if !macro
 	static function main() {
+		travix.Logger.exit(
+			if (testAtCompileTime() && runTests()) 0
+			else 500
+		);
+	}
+	#end
+	static function runTests() {
 		var runner = new TestRunner();
 		for (test in tests)
 			runner.add(test);
-		runner.run();
-	}	
+		return runner.run();		
+	}
+	macro static function testAtCompileTime() {
+		return macro $v{runTests()};
+	}
 }

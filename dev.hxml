@@ -1,4 +1,5 @@
 tests.hxml
+-lib travix
 -lib tink_csss
 -js out.js
 --no-output

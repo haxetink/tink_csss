@@ -1,50 +1,12 @@
 package ;
 
 import tink.csss.Selector;
-import tink.csss.Parser;
-import tink.core.Error;
-using tink.core.Outcome;
 
-
-private enum Pseudo {
-	Not(s:Selector<Pseudo>);
-	Nth(matchType:Bool, factor:Int, offset:Int, backward:Bool);
-	State(s:ElementState);
-	Custom(name:String, args:Array<String>);
-}
+using tink.CoreApi;
 
 class TestParser extends Base {
-	static function parse(s:String)
-		return Parser.parseWith(
-			s, 
-			{
-				not: function (selector) return Success(Not(selector)),
-				nth: function (matchType, factor, offset, backward) return Success(Nth(matchType, factor, offset, backward)),
-				state: function (s) return Success(State(s)),
-				custom: function (name, args) return Success(Custom(name, args))
-			}
-		);		
-	
-	static function make(?tag, ?id, ?classes, ?attrs, ?pseudos, ?combinator):SelectorPart<Pseudo> 
-		return {
-			universal: tag == '*',
-			id: id,
-			tag: if (tag == '*') null else tag,
-			classes: if (classes == null) [] else classes,
-			attrs: if (attrs == null) [] else attrs,
-			pseudos: if (pseudos == null) [] else pseudos,
-			combinator: combinator,
-		}
-
-	static function pseudo(s:String, ?args:Array<String>) {
-		var parts = s.split(',');
-		var name = parts.shift();
-		args = 
-			if (args == null) parts;
-			else parts.concat(args);
-			
-		return Custom(name, args);
-	}
+	static function parse(s:String) 
+		return tink.csss.Parser.parse(s);	
 	
 	static function attr(name:String, ?value:String, ?op:AttrOperator):AttrFilter 
 		return {
@@ -56,47 +18,47 @@ class TestParser extends Base {
 				else Exactly
 		}
 		
-	static var cases = [
-		'#id' => [[make(null, 'id')]],
-		'*' => [[make('*')]],
-		'tag' => [[make('tag')]],
-		'.class' => [[make(['class'])]],
-		'.class1.class2' => [[make(['class1','class2'])]],
+	static var cases:Map<String, Selector> = [
+		'#id' => [[{ id: 'id' }]],
+		'#bar' => [[{ id: 'bar' }]],
+		'*' => [[{ tag: null }]],
+		'div' => [[{ tag: 'div' }]],
+		'.class' => [[{ classes: ['class'] }]],
+		'.class1.class2' => [[{ classes: ['class1', 'class2'] }]],
 		
 		'*tag' => null,
 		'tag*' => null,
 		'tag[foo]tag' => null,
 		
-		'tag#id.class1.class2' => [[make('tag', 'id', ['class1', 'class2'])]],
+		'tag#id.class1.class2' => [[{ tag: 'tag', id: 'id', classes: ['class1', 'class2'] }]],
 		
-		':foo' => [[make([pseudo('foo')])]],
-		'::foo' => [[make([pseudo('foo')])]],
-		'::foo::foo' => [[make([pseudo('foo'), pseudo('foo')])]],
-		':foo(bar)' => [[make([pseudo('foo,bar')])]],
-		':foo(bar,baz)' => [[make([pseudo('foo,bar,baz')])]],
-		//TODO: ':foo(bar(bar),baz)' => [[make([pseudo('foo,bar(bar),baz')])]],
-		':foo(bar,baz):xoo' => [[make([pseudo('foo,bar,baz'), pseudo('xoo')])]],
+		':hover' => [[{ pseudos: [State(Hover)] }]],
+		'::hover' => [[{ pseudos: [State(Hover)] }]],
+		'::foo' => null,
+		'::hover::hover' => [[{ pseudos: [State(Hover), State(Hover)] }]],
 		
-		'[attr]' => [[make([attr('attr')])]],
-		'[attr1][attr2]' => [[make([attr('attr1'), attr('attr2')])]],
-		'[attr=foo]' => [[make([attr('attr', 'foo')])]],
-		'[attr="foo"]' => [[make([attr('attr', 'foo')])]],
-		"[attr='foo']" => [[make([attr('attr', 'foo')])]],
-		"[attr='fo]o']" => [[make([attr('attr', 'fo]o')])]],
-		'[attr~=foo]' => [[make([attr('attr', 'foo', WhitespaceSeperated)])]],
-		'[attr|=foo]' => [[make([attr('attr', 'foo', HyphenSeparated)])]],
-		'[attr^=foo]' => [[make([attr('attr', 'foo', BeginsWith)])]],
-		'[attr$=foo]' => [[make([attr('attr', 'foo', EndsWith)])]],
-		'[attr*=foo]' => [[make([attr('attr', 'foo', Contains)])]],
-		
-		'tag1>tag2' => [[make('tag1', Child), make('tag2')]],
-		'tag1 tag2' => [[make('tag1', Descendant), make('tag2')]],
-		'tag1+tag2' => [[make('tag1', AdjacentSibling), make('tag2')]],
-		'tag1~tag2' => [[make('tag1', GeneralSibling), make('tag2')]],
-		'tag1,tag2' => [[make('tag1')], [make('tag2')]],
-		'tag1,tag2,' => [[make('tag1')], [make('tag2')]],
-		'tag1,tag2, ' => [[make('tag1')], [make('tag2')]],
-		'tag1,tag2,,' => null,
+	  '[attr]' => [[{ attrs: [attr('attr')] }]],
+		'[attr1][attr2]' => [[{ attrs: [attr('attr1'), attr('attr2')] }]],
+		'[attr=foo]' => [[{ attrs: [attr('attr', 'foo')] }]],
+		'[attr="foo"]' => [[{ attrs: [attr('attr', 'foo')] }]],
+		"[attr='foo']" => [[{ attrs: [attr('attr', 'foo')] }]],
+		"[attr='fo]o']" => [[{ attrs: [attr('attr', 'fo]o')] }]],
+		'[attr~=foo]' => [[{ attrs: [attr('attr', 'foo', WhitespaceSeperated)] }]],
+		'[attr|=foo]' => [[{ attrs: [attr('attr', 'foo', HyphenSeparated)] }]],
+		'[attr^=foo]' => [[{ attrs: [attr('attr', 'foo', BeginsWith)] }]],
+		'[attr$=foo]' => [[{ attrs: [attr('attr', 'foo', EndsWith)] }]],
+		'[attr*=foo]' => [[{ attrs: [attr('attr', 'foo', Contains)] }]],
+
+		'tag1> tag2' => [[{ tag: 'tag1', combinator: Child }, { tag: 'tag2' }]],
+		'tag1   tag2' => [[{ tag: 'tag1', combinator: Descendant }, { tag: 'tag2' }]],
+		'tag1		+ tag2' => [[{ tag: 'tag1', combinator: AdjacentSibling }, { tag: 'tag2' }]],
+		'tag1 ~tag2' => [[{ tag: 'tag1', combinator: GeneralSibling }, { tag: 'tag2' }]],
+		'tag1, tag2' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
+		'tag1  , tag2' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
+		'tag1 ,tag2' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
+		// 'tag1,tag2,' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
+		// 'tag1,tag2, ' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
+		// 'tag1,tag2,,' => null,
 		
 		'' => null,
 		',' => null,
@@ -105,28 +67,26 @@ class TestParser extends Base {
 		
 		':not()' => null,
 		':not' => null,
-		':not(div>ul:first-child)' => [[make([Not(parse('div>ul:first-child').sure())])]],
+		':not(div>ul:first-child)' => [[{ pseudos: [Not(parse('div>ul:first-child').sure())] }]],
 		
-		':first-child' => [[make([Nth(false, 0, 1, false)])]],
-		':last-child' => [[make([Nth(false, 0, 1, true)])]],
-		':first-of-type' => [[make([Nth(true, 0, 1, false)])]],
-		':last-of-type' => [[make([Nth(true, 0, 1, true)])]],
+		':first-child' => [[{ pseudos: [Nth(false, 0, 1, false)] }]],
+		':last-child' => [[{ pseudos: [Nth(false, 0, 1, true)] }]],
+		':first-of-type' => [[{ pseudos: [Nth(true, 0, 1, false)] }]],
+		':last-of-type' => [[{ pseudos: [Nth(true, 0, 1, true)] }]],
 		
-		':nth-child(-2n)' => [[make([Nth(false, -2, 0, false)])]],
-		':nth-child(-2n+4)' => [[make([Nth(false, -2, 4, false)])]],
-		':nth-child(2n-4)' => [[make([Nth(false, 2, -4, false)])]],
-		':nth-child(2n+4)' => [[make([Nth(false, 2, 4, false)])]],
+		':nth-child(-2n)' => [[{ pseudos: [Nth(false, -2, 0, false)] }]],
+		':nth-child(-2n+4)' => [[{ pseudos: [Nth(false, -2, 4, false)] }]],
+		':nth-child(2n-4)' => [[{ pseudos: [Nth(false, 2, -4, false)] }]],
+		':nth-child(2n+4)' => [[{ pseudos: [Nth(false, 2, 4, false)] }]],
 		
-		':nth-child(n+4)' => [[make([Nth(false, 1, 4, false)])]],
-		':nth-child(n-4)' => [[make([Nth(false, 1, -4, false)])]],
-		':nth-child(-n-4)' => [[make([Nth(false, -1, -4, false)])]],
-		':nth-child(-n)' => [[make([Nth(false, -1, 0, false)])]],
-		':nth-child(n)' => [[make([Nth(false, 1, 0, false)])]],
-		':nth-child(4)' => [[make([Nth(false, 0, 4, false)])]],
-		':nth-child(-4)' => [[make([Nth(false, 0, -4, false)])]],
+		':nth-child(n+ 4)' => [[{ pseudos: [Nth(false, 1, 4, false)] }]],
+		':nth-child(n -4)' => [[{ pseudos: [Nth(false, 1, -4, false)] }]],
+		':nth-child(-n-4  )' => [[{ pseudos: [Nth(false, -1, -4, false)] }]],
+		':nth-child( -n)' => [[{ pseudos: [Nth(false, -1, 0, false)] }]],
+		':nth-child(n)' => [[{ pseudos: [Nth(false, 1, 0, false)] }]],
+		':nth-child(4)' => [[{ pseudos: [Nth(false, 0, 4, false)] }]],
+		':nth-child(-4)' => [[{ pseudos: [Nth(false, 0, -4, false)] }]],
 		':nth-child(  )' => null,
-		
-		
 		
 		//TODO: add tests for the really complex stuff
 	];
@@ -191,7 +151,7 @@ class TestParser extends Base {
 		for (c in cases.keys()) {
 			var parsed = cases.get(c);
 			if (parsed == null)
-				this.throws(function () parse(c).sure(), Error)
+				this.throws(function () parse(c).sure(), #if macro haxe.macro.Expr.Error #else Error #end)
 			else
 				assertStructEq(cases.get(c), parse(c).sure());
 		}
