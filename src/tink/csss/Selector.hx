@@ -36,6 +36,7 @@ typedef AttrFilter = {
 }
 
 enum Pseudo {
+  Vendored(s:String);
   Active;
   AnyLink;
   Blank;
@@ -64,8 +65,6 @@ enum Pseudo {
   Lang(lang:String);
   LastChild;
   LastOfType;
-  // Left;
-  // First;
   Link;
   LocalLink;
   Not(s:Selector);

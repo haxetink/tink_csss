@@ -80,13 +80,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
     return ret;
   }
 
-  function parseSelectorPart() {
-    var tag = switch ident() {
-      case Success(tag): tag.toString();
-      default:
-        allow('*');
-        null;
-    }
+  function parseSelectorNext(tag:String) {
     var ret = { tag: tag, id: null, classes: [], attrs: new Array<AttrFilter>(), pseudos: [] };
     while (true) {
       if (allowHere('#')) {
@@ -121,8 +115,16 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
         ret.classes.push(ident(true).sure().toString());
       else break;
     }
-    return ret;
+    return ret;    
   }
+
+  function parseSelectorPart() 
+    return parseSelectorNext(switch ident() {
+      case Success(tag): tag.toString();
+      default:
+        allow('*');
+        null;
+    });
 
   function parseInt(?here = false) {
     if (!here) skipIgnored();
@@ -153,12 +155,16 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
       }
       catch (e:Error) Failure(e);
 
+  function parseVendored()
+    return ident(true).sure();
 
   function parsePseudo():Pseudo {
 
     var cls = !allowHere(':');
+    if (!cls && allowHere('-'))
+      return Vendored(parseVendored());
 
-    var name = ident().sure();
+    var name = ident(true).sure();
 
     return switch name.toString() {
       case 'lang' if (cls):
@@ -239,8 +245,6 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
     'drop' => Drop,
     'empty' => Empty,
     'enabled' => Enabled,
-    // 'first' => First,
-    // 'left' => Left,
     'first-child' => FirstChild,
     'first-of-type' => FirstOfType,
     'fullscreen' => Fullscreen,
@@ -273,5 +277,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
     'user-invalid' => UserInvalid,
     'valid' => Valid,
     'visited' => Visited,
+    // 'first' => First, // some @page at-rule related stuff
+    // 'left' => Left,
   ];
 }
