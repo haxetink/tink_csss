@@ -15,8 +15,10 @@ typedef SelectorPart = {
   ?combinator:Combinator,
 }
 
+@:forward(concat, indexOf, map)
 abstract ListOf<T>(Array<T>) from Array<T> {
   public var length(get, never):Int;
+
   function get_length()
     return if (this == null) 0 else this.length;
 

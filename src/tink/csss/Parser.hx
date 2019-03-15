@@ -1,6 +1,7 @@
 package tink.csss;
 
 import tink.parse.Char.*;
+import tink.parse.StringSlice;
 import tink.csss.Selector;
 import tink.core.Error;
 using tink.core.Outcome;
@@ -67,9 +68,12 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
   function unescape(s:String) 
     return s.replace("\\'", "'").replace('\\"', '"');
 
+  function shouldContinue() 
+    return upNext(SELECTOR_START);
+
   function parseSelector():SelectorOption {
     var ret:Array<SelectorPart> = [];
-    while (upNext(SELECTOR_START)) {
+    while (shouldContinue()) {
       var s = parseSelectorPart();
       var pos = this.pos;
       ret.push({
@@ -206,9 +210,12 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
           else ctor(0, i * sign);
         }) + expect(')');
       default:
-        reject(name);
+        unknownPseudo(name);
     }
   }
+
+  function unknownPseudo(name:StringSlice):Pseudo 
+    return reject(name);
 
   static var FANCY = [
     'has' => Has,
