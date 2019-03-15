@@ -32,10 +32,10 @@ class TestParser extends Base {
 		
 		'tag#id.class1.class2' => [[{ tag: 'tag', id: 'id', classes: ['class1', 'class2'] }]],
 		
-		':hover' => [[{ pseudos: [State(Hover)] }]],
-		'::hover' => [[{ pseudos: [State(Hover)] }]],
+		':hover' => [[{ pseudos: [Hover] }]],
+		'::hover' => [[{ pseudos: [Hover] }]],
 		'::foo' => null,
-		'::hover::hover' => [[{ pseudos: [State(Hover), State(Hover)] }]],
+		'::hover::hover' => [[{ pseudos: [Hover, Hover] }]],
 		
 	  '[attr]' => [[{ attrs: [attr('attr')] }]],
 		'[attr1][attr2]' => [[{ attrs: [attr('attr1'), attr('attr2')] }]],
@@ -69,23 +69,23 @@ class TestParser extends Base {
 		':not' => null,
 		':not(div>ul:first-child)' => [[{ pseudos: [Not(parse('div>ul:first-child').sure())] }]],
 		
-		':first-child' => [[{ pseudos: [Nth(false, 0, 1, false)] }]],
-		':last-child' => [[{ pseudos: [Nth(false, 0, 1, true)] }]],
-		':first-of-type' => [[{ pseudos: [Nth(true, 0, 1, false)] }]],
-		':last-of-type' => [[{ pseudos: [Nth(true, 0, 1, true)] }]],
+		':first-child' => [[{ pseudos: [FirstChild] }]],
+		':last-child' => [[{ pseudos: [LastChild] }]],
+		':first-of-type' => [[{ pseudos: [FirstOfType] }]],
+		':last-of-type' => [[{ pseudos: [LastOfType] }]],
 		
-		':nth-child(-2n)' => [[{ pseudos: [Nth(false, -2, 0, false)] }]],
-		':nth-child(-2n+4)' => [[{ pseudos: [Nth(false, -2, 4, false)] }]],
-		':nth-child(2n-4)' => [[{ pseudos: [Nth(false, 2, -4, false)] }]],
-		':nth-child(2n+4)' => [[{ pseudos: [Nth(false, 2, 4, false)] }]],
+		':nth-child(-2n)' => [[{ pseudos: [NthChild(-2, 0)] }]],
+		':nth-child(-2n+4)' => [[{ pseudos: [NthChild(-2, 4)] }]],
+		':nth-child(2n-4)' => [[{ pseudos: [NthChild(2, -4)] }]],
+		':nth-child(2n+4)' => [[{ pseudos: [NthChild(2, 4)] }]],
 		
-		':nth-child(n+ 4)' => [[{ pseudos: [Nth(false, 1, 4, false)] }]],
-		':nth-child(n -4)' => [[{ pseudos: [Nth(false, 1, -4, false)] }]],
-		':nth-child(-n-4  )' => [[{ pseudos: [Nth(false, -1, -4, false)] }]],
-		':nth-child( -n)' => [[{ pseudos: [Nth(false, -1, 0, false)] }]],
-		':nth-child(n)' => [[{ pseudos: [Nth(false, 1, 0, false)] }]],
-		':nth-child(4)' => [[{ pseudos: [Nth(false, 0, 4, false)] }]],
-		':nth-child(-4)' => [[{ pseudos: [Nth(false, 0, -4, false)] }]],
+		':nth-child(n+ 4)' => [[{ pseudos: [NthChild(1, 4)] }]],
+		':nth-child(n -4)' => [[{ pseudos: [NthChild(1, -4)] }]],
+		':nth-child(-n-4  )' => [[{ pseudos: [NthChild(-1, -4)] }]],
+		':nth-child( -n)' => [[{ pseudos: [NthChild(-1, 0)] }]],
+		':nth-child(n)' => [[{ pseudos: [NthChild(1, 0)] }]],
+		':nth-child(4)' => [[{ pseudos: [NthChild(0, 4)] }]],
+		':nth-child(-4)' => [[{ pseudos: [NthChild(0, -4)] }]],
 		':nth-child(  )' => null,
 		
 		//TODO: add tests for the really complex stuff

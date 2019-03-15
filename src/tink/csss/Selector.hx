@@ -24,21 +24,77 @@ abstract ListOf<T>(Array<T>) from Array<T> {
     return if (this == null) null else this[index];
 }
 
-typedef AttrFilter = {	
+typedef AttrFilter = {
   var name(default, never):String;
   @:optional var value(default, never):String;
   @:optional var op(default, never):AttrOperator;
 }
 
+@:enum abstract Directionality(String) to String {
+  var Rtl = 'rtl';
+  var Ltr = 'ltr';
+}
+
 enum Pseudo {
-  State(s:ElementState);
+  Active;
+  AnyLink;
+  Blank;
+  Checked;
+  Current;
+  Default;
+  Defined;
+  Dir(d:Directionality);
+  Disabled;
+  Drop;
+  Empty;
+  Enabled;
+  FirstChild;
+  FirstOfType;
+  Fullscreen;
+  Future;
+  Focus;
+  FocusVisible;
+  FocusWithin;
+  Has(s:Selector);
+  Hover;
+  Indeterminate;
+  InRange;
+  Invalid;
+  Is(s:Selector);
+  Lang(lang:String);
+  LastChild;
+  LastOfType;
+  // Left;
+  // First;
+  Link;
+  LocalLink;
   Not(s:Selector);
-  Nth(matchType:Bool, factor:Int, offset:Int, backward:Bool);
-  Custom(s:String);
+  NthChild(factor:Int, offset:Int);
+  NthLastChild(factor:Int, offset:Int);
+  NthLastOfType(factor:Int, offset:Int);
+  NthOfType(factor:Int, offset:Int);
+  OnlyChild;
+  OnlyOfType;
+  Optional;
+  OutOfRange;
+  Past;
+  PlaceholderShown;
+  ReadOnly;
+  ReadWrite;
+  Required;
+  Right;
+  Root;
+  Scope;
+  Target;
+  TargetWithin;
+  UserInvalid;
+  Valid;
+  Visited;
+  Where(s:Selector);
 }
 
 @:enum abstract ElementState(String) to String {
-  
+
   var Checked = "checked";
   var Invalid = "invalid";
   var Valid = "valid";
