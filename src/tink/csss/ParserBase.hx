@@ -7,7 +7,7 @@ import tink.core.Error;
 using tink.core.Outcome;
 using StringTools;
 
-class ParserBase<Pseudo, Pos, Error> extends tink.parse.ParserBase<Pos, Error> {
+class ParserBase<Pos, Error> extends tink.parse.ParserBase<Pos, Error> {
   static var IDENT_START = "_" || UPPER || LOWER;
   static var IDENT_CONTD = IDENT_START || DIGIT || '-';
   static var SELECTOR_START = IDENT_START || '#*:[.';
@@ -22,7 +22,7 @@ class ParserBase<Pseudo, Pos, Error> extends tink.parse.ParserBase<Pos, Error> {
   override function doSkipIgnored() 
     doReadWhile(WHITE);
   
-  function parseFullSelector():SelectorOf<Pseudo> {
+  function parseFullSelector():Selector {
     var ret = [];
     do ret.push(switch parseSelector() {
       case { length : 0 }: die('selector expected');
@@ -43,8 +43,8 @@ class ParserBase<Pseudo, Pos, Error> extends tink.parse.ParserBase<Pos, Error> {
   }
 
 
-  function parseSelector():SelectorOptionOf<Pseudo> {
-    var ret:Array<SelectorPartOf<Pseudo>> = [];
+  function parseSelector():SelectorOption {
+    var ret:Array<SelectorPart> = [];
     while (upNext(SELECTOR_START)) {
       var s = parseSelectorPart();
       var pos = this.pos;

@@ -6,11 +6,11 @@ import tink.core.Error;
 using tink.core.Outcome;
 using StringTools;
 
-typedef Plugin<Pseudo> = {
-  function not(s:SelectorOf<Pseudo>):Pseudo;
+typedef Plugin = {
+  function not(s:Selector):Pseudo;
   function state(s:ElementState):Pseudo;
   function nth(matchType:Bool, factor:Int, offset:Int, backward:Bool):Pseudo;
-  function custom(name:String, args:Array<String>):Outcome<Pseudo, String>;
+  function custom(name:String):Pseudo;
 }
 
 #if !macro
@@ -29,9 +29,9 @@ private class RuntimeReporter implements tink.parse.Reporter.ReporterObject<Pos,
 
 }
 #end
-class Parser<Pseudo, Position, Error> extends ParserBase<Pseudo, Position, Error> {
+class Parser<Position, Error> extends ParserBase<Position, Error> {
   
-  var pseudos:Plugin<Pseudo>;
+  var pseudos:Plugin;
   
   function new(pseudos, source, reporter, ?offset) {
     super(source, reporter, offset);
@@ -40,11 +40,10 @@ class Parser<Pseudo, Position, Error> extends ParserBase<Pseudo, Position, Error
   
   static public function parse(source, ?pos) 
     return parseWith(source, {
-      not: Not, nth: Nth, state: State,
-      custom: function (name, _) return Failure('Unknown pseudo class :$name')
+      not: Not, nth: Nth, state: State, custom: Custom,
     }, pos);
   
-  static public function parseWith<Pseudo>(source, pseudos:Plugin<Pseudo>, ?pos):Outcome<SelectorOf<Pseudo>, Error>
+  static public function parseWith<Pseudo>(source, pseudos:Plugin, ?pos):Outcome<Selector, Error>
     return 
       try {
         #if macro

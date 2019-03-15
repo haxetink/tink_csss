@@ -2,18 +2,16 @@ package tink.csss;
 
 using tink.CoreApi;
 
-typedef Selector = SelectorOf<Pseudo>;
+typedef Selector = ListOf<SelectorOption>;
 
-typedef SelectorOf<P> = ListOf<SelectorOptionOf<P>>;
+typedef SelectorOption = ListOf<SelectorPart>;
 
-typedef SelectorOptionOf<P> = ListOf<SelectorPartOf<P>>;
-
-typedef SelectorPartOf<P> = {
+typedef SelectorPart = {
   ?id:String,
   ?tag:String,
   ?classes:ListOf<String>,
   ?attrs:ListOf<AttrFilter>,
-  ?pseudos:ListOf<P>,
+  ?pseudos:ListOf<Pseudo>,
   ?combinator:Combinator,
 }
 
@@ -34,8 +32,9 @@ typedef AttrFilter = {
 
 enum Pseudo {
   State(s:ElementState);
-  Not(s:SelectorOf<Pseudo>);
+  Not(s:Selector);
   Nth(matchType:Bool, factor:Int, offset:Int, backward:Bool);
+  Custom(s:String);
 }
 
 @:enum abstract ElementState(String) to String {
