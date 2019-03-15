@@ -156,19 +156,19 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
 
   function parsePseudo():Pseudo {
     
-    allowHere(':');
+    var cls = !allowHere(':');
     
     var name = ident().sure();
 
     return switch name.toString() {
-      case 'lang':
+      case 'lang' if (cls):
         expect('(') + Lang(ident().sure()) + expect(')');
-      case 'dir':
+      case 'dir' if (cls):
         expect('(') + Dir(if (allow(Rtl)) Rtl else if (allow(Ltr)) Ltr else die('expected `$Rtl` or `$Ltr`')) + expect(')');
-      case SIMPLE[_] => found if (found != null): found;
-      case FANCY[_] => ctor if (ctor != null):
+      case SIMPLE[_] => found if (cls && found != null): found;
+      case FANCY[_] => ctor if (cls && ctor != null):
         expect('(') + ctor(parseFullSelector()) + expect(')');
-      case NUMERIC[_] => ctor if (ctor != null):
+      case NUMERIC[_] => ctor if (cls && ctor != null):
         expect('(');
         var sign = if (allow('-')) -1 else 1;
 

@@ -33,9 +33,9 @@ class TestParser extends Base {
 		'tag#id.class1.class2' => [[{ tag: 'tag', id: 'id', classes: ['class1', 'class2'] }]],
 		
 		':hover' => [[{ pseudos: [Hover] }]],
-		'::hover' => [[{ pseudos: [Hover] }]],
-		'::foo' => null,
-		'::hover::hover' => [[{ pseudos: [Hover, Hover] }]],
+		'::hover' => null,
+		':foo' => null,
+		':hover:hover' => [[{ pseudos: [Hover, Hover] }]],
 		
 	  '[attr]' => [[{ attrs: [attr('attr')] }]],
 		'[attr1][attr2]' => [[{ attrs: [attr('attr1'), attr('attr2')] }]],
