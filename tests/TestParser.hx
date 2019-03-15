@@ -51,6 +51,7 @@ class TestParser extends Base {
 		'[attr^=foo]' => [[{ attrs: [attr('attr', 'foo', BeginsWith)] }]],
 		'[attr$=foo]' => [[{ attrs: [attr('attr', 'foo', EndsWith)] }]],
 		'[attr*=foo]' => [[{ attrs: [attr('attr', 'foo', Contains)] }]],
+		'[attr="fo\\\"o"]' => [[{ attrs: [attr('attr', "fo\"o")] }]],
 
 		'tag1> tag2' => [[{ tag: 'tag1', combinator: Child }, { tag: 'tag2' }]],
 		'tag1   tag2' => [[{ tag: 'tag1', combinator: Descendant }, { tag: 'tag2' }]],

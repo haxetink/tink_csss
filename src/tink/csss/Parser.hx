@@ -54,9 +54,18 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
         expect('"');
         '"';
       }
-    return upto(end).sure();
+    var ret = '';
+    while (true) {
+      ret += upto(end).sure().toString();
+      if (source.fastGet(pos - 2) != '\\'.code)
+        break;
+      ret += end;
+    }
+    return unescape(ret);
   }
 
+  function unescape(s:String) 
+    return s.replace("\\'", "'").replace('\\"', '"');
 
   function parseSelector():SelectorOption {
     var ret:Array<SelectorPart> = [];
@@ -105,7 +114,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
               else die('operator expected'),
             value:
               (switch ident() {
-                case Success(v): v;
+                case Success(v): v.toString();
                 default: parseString();
               }) + expect(']'),
           }
