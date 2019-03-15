@@ -155,9 +155,9 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
 
 
   function parsePseudo():Pseudo {
-    
+
     var cls = !allowHere(':');
-    
+
     var name = ident().sure();
 
     return switch name.toString() {
@@ -165,7 +165,9 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
         expect('(') + Lang(ident().sure()) + expect(')');
       case 'dir' if (cls):
         expect('(') + Dir(if (allow(Rtl)) Rtl else if (allow(Ltr)) Ltr else die('expected `$Rtl` or `$Ltr`')) + expect(')');
+      case ELEMENTS[_] => found if (found != null): found;
       case SIMPLE[_] => found if (cls && found != null): found;
+      case STRICT_ELEMENTS[_] => found if (!cls && found != null): found;
       case FANCY[_] => ctor if (cls && ctor != null):
         expect('(') + ctor(parseFullSelector()) + expect(')');
       case NUMERIC[_] => ctor if (cls && ctor != null):
@@ -205,6 +207,22 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
     'nth-last-child' => NthLastChild,
     'nth-last-of-type' => NthLastOfType,
     'nth-of-type' => NthOfType,
+  ];
+
+  static var STRICT_ELEMENTS = [
+    'grammar-error' => GrammarError,
+    'marker' => Marker,
+    'placeholder' => Placeholder,
+    'selection' => Selection,
+    'spelling-error' => SpellingError,
+  ];
+
+  static var ELEMENTS = [
+    'after' => After,
+    'before' => Before,
+    'cue' => Cue,
+    'first-letter' => FirstLetter,
+    'first-line' => FirstLine,
   ];
 
   static var SIMPLE:Map<String, Pseudo> = [

@@ -34,6 +34,9 @@ class TestParser extends Base {
 		
 		':hover' => [[{ pseudos: [Hover] }]],
 		'::hover' => null,
+		'::marker' => [[{ pseudos: [Marker] }]],
+		':after' => [[{ pseudos: [After] }]],
+		'::after' => [[{ pseudos: [After] }]],
 		':foo' => null,
 		':hover:hover' => [[{ pseudos: [Hover, Hover] }]],
 		

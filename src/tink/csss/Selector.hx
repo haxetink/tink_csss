@@ -91,6 +91,16 @@ enum Pseudo {
   Valid;
   Visited;
   Where(s:Selector);
+  GrammarError;
+  Marker;
+  Placeholder;
+  Selection;
+  SpellingError;
+  After;
+  Before;
+  Cue;
+  FirstLetter;
+  FirstLine;
 }
 
 @:enum abstract ElementState(String) to String {
