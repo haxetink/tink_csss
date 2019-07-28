@@ -7,15 +7,14 @@ typedef Selector = ListOf<SelectorOption>;
 typedef SelectorOption = ListOf<SelectorPart>;
 
 typedef SelectorPart = {
-  ?id:String,
-  ?tag:String,
-  ?classes:ListOf<String>,
-  ?attrs:ListOf<AttrFilter>,
-  ?pseudos:ListOf<Pseudo>,
-  ?combinator:Combinator,
+  final ?id:String;
+  final ?tag:String;
+  final ?classes:ListOf<String>;
+  final ?attrs:ListOf<AttrFilter>;
+  final ?pseudos:ListOf<Pseudo>;
+  final ?combinator:Combinator;
 }
 
-@:forward(concat, indexOf, map)
 abstract ListOf<T>(Array<T>) from Array<T> {
   public var length(get, never):Int;
 
@@ -24,15 +23,27 @@ abstract ListOf<T>(Array<T>) from Array<T> {
 
   @:arrayAccess inline function get(index:Int)
     return if (this == null) null else this[index];
+
+  public function map<R>(f:T->R):ListOf<R>
+    return switch this {
+      case null: null;
+      case v: v.map(f);
+    }
+
+  public function concat(that:ListOf<T>):ListOf<T>
+    return switch [this, that] {
+      case [null, v] | [v, null]: v;
+      default: this.concat(cast that);
+    }
 }
 
 typedef AttrFilter = {
-  var name(default, never):String;
-  @:optional var value(default, never):String;
-  @:optional var op(default, never):AttrOperator;
+  final name:String;
+  final ?value:String;
+  final ?op:AttrOperator;
 }
 
-@:enum abstract Directionality(String) to String {
+enum abstract Directionality(String) to String {
   var Rtl = 'rtl';
   var Ltr = 'ltr';
 }
@@ -104,34 +115,17 @@ enum Pseudo {
   FirstLine;
 }
 
-@:enum abstract ElementState(String) to String {
-
-  var Checked = "checked";
-  var Invalid = "invalid";
-  var Valid = "valid";
-  var Focus = "focus";
-  var Hover = "hover";
-
-  static public function ofString(s:String, ?pos):Outcome<ElementState, Error>
-    return switch s {
-      case Checked | Invalid | Valid | Focus | Hover: Success(cast s);
-      default: Failure(new Error(UnprocessableEntity, 'unknown state $s'));
-    }
-
+enum abstract AttrOperator(String) to String {
+  var None = '';
+  var WhitespaceSeperated = '~=';
+  var HyphenSeparated = '|=';
+  var BeginsWith = '^=';
+  var EndsWith = '$=';
+  var Contains = '*=';
+  var Exactly = '=';
 }
 
-//TODO: with the next Haxe update, these should become inline enums
-enum AttrOperator {
-  None;
-  Exactly;
-  WhitespaceSeperated;
-  HyphenSeparated;
-  BeginsWith;
-  EndsWith;
-  Contains;
-}
-
-@:enum abstract Combinator(String) {
+enum abstract Combinator(String) to String {
   var Descendant = null;
   var Child = '>';
   var AdjacentSibling = '+';

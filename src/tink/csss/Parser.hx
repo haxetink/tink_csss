@@ -93,6 +93,17 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
     return ret;
   }
 
+  static var OPERATORS = [
+    for (op in [WhitespaceSeperated, HyphenSeparated, BeginsWith, EndsWith, Contains, Exactly]) 
+      op => ((op:String):StringSlice)
+  ];
+
+  function parseAttrOperator() {
+    for (op => tk in OPERATORS)
+      if (allow(tk)) return op;
+    return die('operator expected');
+  }
+
   function parseSelectorNext(tag:String) {
     var ret = { tag: tag, id: null, classes: [], attrs: new Array<AttrFilter>(), pseudos: [] };
     while (true) {
@@ -108,14 +119,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
           if (allow(']')) { name: name, op: None, value: null }
           else {
             name: name,
-            op:
-              if (allow('~=')) WhitespaceSeperated
-              else if (allow('|=')) HyphenSeparated
-              else if (allow('^=')) BeginsWith
-              else if (allow('$=')) EndsWith
-              else if (allow('*=')) Contains
-              else if (allow('=')) Exactly
-              else die('operator expected'),
+            op: parseAttrOperator(),
             value:
               (switch ident() {
                 case Success(v): v.toString();
