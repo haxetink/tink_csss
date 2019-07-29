@@ -16,7 +16,43 @@ class Printer {
       case v: v;
     }    
 
+    switch p.id {
+      case null | '': 
+      case v: ret += '#$v';
+    }
+
+    for (c in p.classes)
+      ret += '.$c';
+
+    for (a in p.attrs)
+      ret += '[${a.name}${a.op}${attrValue(a.value)}]';
+
+    for (p in p.pseudos)
+      ret += pseudo(p);
+
     return ret;
+  }
+
+  static function attrValue(v:String) {
+    if (v == null) return '';
+    var quoted = false;
+    var ret = '';
+    
+    for (i in 0...v.length) {
+      var char = v.charAt(i);
+      switch char {
+        case '"' | "'" | '\\':
+          ret += '\\';
+          quoted = true;
+        case ']' | '[':
+          quoted = true;
+        default:
+      }
+      ret += char;
+    }
+    return
+      if (quoted) '"$ret"';
+      else ret;
   }
 
   public function option(o:SelectorOption) 
@@ -30,7 +66,6 @@ class Printer {
             case null: ' ';
             case v: '$SPACE$v$SPACE';
           }) + part(o[1]);
-
         ret;
       }
 

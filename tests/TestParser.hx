@@ -95,62 +95,6 @@ class TestParser extends Base {
 		//TODO: add tests for the really complex stuff
 	];
 	
-	function assertStructEq<A>(expected:A, found:A) {
-		function compare(e:Dynamic, f:Dynamic):Bool
-			return 
-				switch Type.typeof(e) {
-					case TNull, TInt, TBool, TFloat, TUnknown, TClass(String): e == f;
-					case TObject:
-						var ret = true;
-						//TODO: consider checking surplus fields
-						for (field in Reflect.fields(e)) 
-							if (field != '__id__' && !compare(Reflect.field(e, field), Reflect.field(f, field))) {
-								ret = false;
-								break;
-							}
-						ret;
-					case TEnum(enm):
-						Std.is(f, enm) 
-						&& 
-						compare(Type.enumIndex(e), Type.enumIndex(f))
-						&&
-						compare(Type.enumParameters(e), Type.enumParameters(f));
-					case TClass(Array):
-						var ret = compare(e.length, f.length);
-						if (ret)
-							for (i in 0...e.length)
-								if (!compare(e[i], f[i])) {
-									ret = false;
-									break;
-								}
-						ret;
-					case TClass(_) if (Std.is(e, haxe.Constraints.IMap)):
-						var e:Map.IMap<Dynamic, Dynamic> = e,
-							f:Map.IMap<Dynamic, Dynamic> = f;
-							
-						var ret = true;
-						function find(orig:Dynamic) {
-							for (copy in f.keys())
-								if (compare(orig, copy)) 
-									return copy;
-							return orig;
-						}
-						if (ret)
-							for (k in e.keys())
-								if (!compare(e.get(k), f.get(find(k)))) {
-									ret = false;
-									break;
-								}
-						e.toString();
-						ret;
-					default:
-						throw 'assert';
-				}
-
-		if (compare(expected, found)) assertTrue(true);
-		else fail('expected something like $expected, found $found');
-	}
-	
 	function testAll() {
 		for (c in cases.keys()) {
 			var parsed = cases.get(c);

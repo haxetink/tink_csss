@@ -7,6 +7,7 @@ using tink.core.Outcome;
 class Run {
 	static var tests:Array<TestCase> = [
 		new TestParser(),
+		new TestPrinter(),
 	];
 	
 	#if !macro
