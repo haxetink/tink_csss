@@ -32,7 +32,7 @@ class Printer {
 
     return switch ret {
       case '': '*';
-      default: '';
+      default: ret;
     }
   }
 
