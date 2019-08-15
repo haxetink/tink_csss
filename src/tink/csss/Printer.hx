@@ -12,7 +12,7 @@ class Printer {
   public function part(p:SelectorPart) {
 
     var ret = switch p.tag {
-      case null | '': '*';
+      case null | '' | '*': '';
       case v: v;
     }    
 
@@ -30,7 +30,10 @@ class Printer {
     for (p in p.pseudos)
       ret += pseudo(p);
 
-    return ret;
+    return switch ret {
+      case '': '*';
+      default: '';
+    }
   }
 
   static function attrValue(v:String) {
