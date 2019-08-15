@@ -12,8 +12,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Initial haxelib release.",
-	"version": "0.1.0",
+	"releasenote": "Stricter pseudo class/element support. Add parser hooks and printer.",
+	"version": "0.2.0",
 	"url": "http://haxetink.org/tink_csss",
 	"dependencies": {
 		"tink_parse": ""
