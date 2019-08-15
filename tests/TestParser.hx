@@ -5,19 +5,19 @@ import tink.csss.Selector;
 using tink.CoreApi;
 
 class TestParser extends Base {
-	static function parse(s:String) 
-		return tink.csss.Parser.parse(s);	
-	
-	static function attr(name:String, ?value:String, ?op:AttrOperator):AttrFilter 
+	static function parse(s:String)
+		return tink.csss.Parser.parse(s);
+
+	static function attr(name:String, ?value:String, ?op:AttrOperator):AttrFilter
 		return {
 			name: name,
 			value: value,
-			op: 
+			op:
 				if (op != null) op
 				else if (value == null) None
 				else Exactly
 		}
-		
+
 	static var cases:Map<String, Selector> = [
 		'#id' => [[{ id: 'id' }]],
 		'#bar' => [[{ id: 'bar' }]],
@@ -25,13 +25,13 @@ class TestParser extends Base {
 		'div' => [[{ tag: 'div' }]],
 		'.class' => [[{ classes: ['class'] }]],
 		'.class1.class2' => [[{ classes: ['class1', 'class2'] }]],
-		
+
 		'*tag' => null,
 		'tag*' => null,
 		'tag[foo]tag' => null,
-		
+
 		'tag#id.class1.class2' => [[{ tag: 'tag', id: 'id', classes: ['class1', 'class2'] }]],
-		
+
 		':hover' => [[{ pseudos: [Hover] }]],
 		'::hover' => null,
 		'::marker' => [[{ pseudos: [Marker] }]],
@@ -39,7 +39,7 @@ class TestParser extends Base {
 		'::after' => [[{ pseudos: [After] }]],
 		':foo' => null,
 		':hover:hover' => [[{ pseudos: [Hover, Hover] }]],
-		
+
 	  '[attr]' => [[{ attrs: [attr('attr')] }]],
 		'[attr1][attr2]' => [[{ attrs: [attr('attr1'), attr('attr2')] }]],
 		'[attr=foo]' => [[{ attrs: [attr('attr', 'foo')] }]],
@@ -60,29 +60,26 @@ class TestParser extends Base {
 		'tag1, tag2' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
 		'tag1  , tag2' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
 		'tag1 ,tag2' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
-		// 'tag1,tag2,' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
-		// 'tag1,tag2, ' => [[{ tag: 'tag1' }], [{ tag: 'tag2' }]],
-		// 'tag1,tag2,,' => null,
-		
+
 		'' => null,
 		',' => null,
 		'#' => null,
 		'.' => null,
-		
+
 		':not()' => null,
 		':not' => null,
 		':not(div>ul:first-child)' => [[{ pseudos: [Not(parse('div>ul:first-child').sure())] }]],
-		
+
 		':first-child' => [[{ pseudos: [FirstChild] }]],
 		':last-child' => [[{ pseudos: [LastChild] }]],
 		':first-of-type' => [[{ pseudos: [FirstOfType] }]],
 		':last-of-type' => [[{ pseudos: [LastOfType] }]],
-		
+
 		':nth-child(-2n)' => [[{ pseudos: [NthChild(-2, 0)] }]],
 		':nth-child(-2n+4)' => [[{ pseudos: [NthChild(-2, 4)] }]],
 		':nth-child(2n-4)' => [[{ pseudos: [NthChild(2, -4)] }]],
 		':nth-child(2n+4)' => [[{ pseudos: [NthChild(2, 4)] }]],
-		
+
 		':nth-child(n+ 4)' => [[{ pseudos: [NthChild(1, 4)] }]],
 		':nth-child(n -4)' => [[{ pseudos: [NthChild(1, -4)] }]],
 		':nth-child(-n-4  )' => [[{ pseudos: [NthChild(-1, -4)] }]],
@@ -91,10 +88,10 @@ class TestParser extends Base {
 		':nth-child(4)' => [[{ pseudos: [NthChild(0, 4)] }]],
 		':nth-child(-4)' => [[{ pseudos: [NthChild(0, -4)] }]],
 		':nth-child(  )' => null,
-		
+
 		//TODO: add tests for the really complex stuff
 	];
-	
+
 	function testAll() {
 		for (c in cases.keys()) {
 			var parsed = cases.get(c);
@@ -105,5 +102,5 @@ class TestParser extends Base {
 		}
 		assertTrue(true);
 	}
-	
+
 }

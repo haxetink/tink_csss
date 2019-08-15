@@ -7,10 +7,12 @@ using tink.CoreApi;
 
 class TestPrinter extends Base {
 	function test() {
-		var p = new Printer('');
+		var p = new Printer(''),
+				cases = @:privateAccess TestParser.cases;
 
-		for (raw => selector in @:privateAccess TestParser.cases)
-			if (selector != null) 
+		for (selector in cases)
+			if (selector != null)
 				assertStructEq(selector, Parser.parse(p.selector(selector)).sure());
+				
 	}
 }

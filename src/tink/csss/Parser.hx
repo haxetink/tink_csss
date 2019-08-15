@@ -99,8 +99,8 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
   ];
 
   function parseAttrOperator() {
-    for (op => tk in OPERATORS)
-      if (allow(tk)) return op;
+    for (op in OPERATORS.keys())
+      if (allow(OPERATORS[op])) return op;
     return die('operator expected');
   }
 

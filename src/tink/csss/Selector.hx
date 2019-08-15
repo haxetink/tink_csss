@@ -7,12 +7,12 @@ typedef Selector = ListOf<SelectorOption>;
 typedef SelectorOption = ListOf<SelectorPart>;
 
 typedef SelectorPart = {
-  final ?id:String;
-  final ?tag:String;
-  final ?classes:ListOf<String>;
-  final ?attrs:ListOf<AttrFilter>;
-  final ?pseudos:ListOf<Pseudo>;
-  final ?combinator:Combinator;
+  @:optional var id(default, never):String;
+  @:optional var tag(default, never):String;
+  @:optional var classes(default, never):ListOf<String>;
+  @:optional var attrs(default, never):ListOf<AttrFilter>;
+  @:optional var pseudos(default, never):ListOf<Pseudo>;
+  @:optional var combinator(default, never):Combinator;
 }
 
 abstract ListOf<T>(Array<T>) from Array<T> {
@@ -38,12 +38,12 @@ abstract ListOf<T>(Array<T>) from Array<T> {
 }
 
 typedef AttrFilter = {
-  final name:String;
-  final ?value:String;
-  final ?op:AttrOperator;
+  var name(default, never):String;
+  @:optional var value(default, never):String;
+  @:optional var op(default, never):AttrOperator;
 }
 
-enum abstract Directionality(String) to String {
+@:enum abstract Directionality(String) to String {
   var Rtl = 'rtl';
   var Ltr = 'ltr';
 }
@@ -115,7 +115,7 @@ enum Pseudo {
   FirstLine;
 }
 
-enum abstract AttrOperator(String) to String {
+@:enum abstract AttrOperator(String) to String {
   var None = '';
   var WhitespaceSeperated = '~=';
   var HyphenSeparated = '|=';
@@ -125,7 +125,7 @@ enum abstract AttrOperator(String) to String {
   var Exactly = '=';
 }
 
-enum abstract Combinator(String) to String {
+@:enum abstract Combinator(String) to String {
   var Descendant = null;
   var Child = '>';
   var AdjacentSibling = '+';
