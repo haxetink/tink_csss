@@ -68,7 +68,7 @@ class Printer {
           ret += (switch o[i - 1].combinator {
             case null: ' ';
             case v: '$SPACE$v$SPACE';
-          }) + part(o[1]);
+          }) + part(o[i]);
         ret;
       }
 
