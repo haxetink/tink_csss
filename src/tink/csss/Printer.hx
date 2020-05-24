@@ -85,7 +85,7 @@ class Printer {
 
   public function pseudo(p:Pseudo) 
     return switch p {
-      case Vendored(s): s;
+      case Vendored(s): '::-$s';
       case Dir(s): ':dir($s)';
       case Lang(s): ':name($s)';
       case NthChild(factor, offset): ':nth-child(${args(factor, offset)})';
