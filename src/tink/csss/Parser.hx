@@ -65,10 +65,10 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
     return unescape(ret);
   }
 
-  function unescape(s:String) 
+  function unescape(s:String)
     return s.replace("\\'", "'").replace('\\"', '"');
 
-  function shouldContinue() 
+  function shouldContinue()
     return upNext(SELECTOR_START);
 
   function parseSelector():SelectorOption {
@@ -94,7 +94,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
   }
 
   static var OPERATORS = [
-    for (op in [WhitespaceSeperated, HyphenSeparated, BeginsWith, EndsWith, Contains, Exactly]) 
+    for (op in [WhitespaceSeperated, HyphenSeparated, BeginsWith, EndsWith, Contains, Exactly])
       op => ((op:String):StringSlice)
   ];
 
@@ -132,10 +132,10 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
         ret.classes.push(ident(true).sure().toString());
       else break;
     }
-    return ret;    
+    return ret;
   }
 
-  function parseSelectorPart() 
+  function parseSelectorPart()
     return parseSelectorNext(switch ident() {
       case Success(tag): tag.toString();
       default:
@@ -170,7 +170,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
         else
           Success(s);
       }
-      catch (e:Error) Failure(e);
+      catch (e:TypedError<Dynamic>) Failure((cast e:Error));
 
   function parseVendored()
     return ident(true).sure();
@@ -218,7 +218,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
     }
   }
 
-  function unknownPseudo(name:StringSlice):Pseudo 
+  function unknownPseudo(name:StringSlice):Pseudo
     return reject(name);
 
   static var FANCY = [
