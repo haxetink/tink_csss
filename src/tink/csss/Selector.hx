@@ -43,6 +43,7 @@ typedef AttrFilter = {
   @:optional var op(default, never):AttrOperator;
 }
 
+@:transitive
 @:enum abstract Directionality(String) to String {
   var Rtl = 'rtl';
   var Ltr = 'ltr';
