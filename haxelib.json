@@ -1,21 +1,21 @@
 {
 	"name": "tink_csss",
-	"license": "MIT",
+	"description": "",
+	"classPath": "src",
+	"dependencies": {
+		"tink_parse": ""
+	},
+	"url": "http://haxetink.org/tink_csss",
+	"contributors": [
+		"back2dos"
+	],
+	"version": "0.2.3",
+	"releasenote": "Haxe 4.2 compat.",
 	"tags": [
 		"tink",
 		"css",
 		"selectors",
 		"cross"
 	],
-	"classPath": "src",
-	"description": "",
-	"contributors": [
-		"back2dos"
-	],
-	"releasenote": "Fix printer.",
-	"version": "0.2.2",
-	"url": "http://haxetink.org/tink_csss",
-	"dependencies": {
-		"tink_parse": ""
-	}
+	"license": "MIT"
 }
