@@ -5,7 +5,7 @@ import tink.csss.Selector;
 class Printer {
 
   var SPACE:String;
-  
+
   public function new(space)
     this.SPACE = space;
 
@@ -14,10 +14,10 @@ class Printer {
     var ret = switch p.tag {
       case null | '' | '*': '';
       case v: v;
-    }    
+    }
 
     switch p.id {
-      case null | '': 
+      case null | '':
       case v: ret += '#$v';
     }
 
@@ -38,28 +38,25 @@ class Printer {
 
   static function attrValue(v:String) {
     if (v == null) return '';
-    var quoted = false;
-    var ret = '';
-    
+    var ret = new StringBuf();
+    ret.addChar('"'.code);
+
     for (i in 0...v.length) {
-      var char = v.charAt(i);
+      var char = v.charCodeAt(i);
       switch char {
-        case '"' | "'" | '\\':
-          ret += '\\';
-          quoted = true;
-        case ']' | '[':
-          quoted = true;
+        case '"'.code | "'".code | '\\'.code:
+          ret.addChar('\\'.code);
         default:
       }
-      ret += char;
+      ret.addChar(char);
     }
-    return
-      if (quoted) '"$ret"';
-      else ret;
+    ret.addChar('"'.code);
+
+    return ret.toString();
   }
 
-  public function option(o:SelectorOption) 
-    return 
+  public function option(o:SelectorOption)
+    return
       if (o.length == 0) '*';
       else {
         var ret = part(o[0]);
@@ -83,7 +80,7 @@ class Printer {
       case [f, o]: '${f}n$SPACE-$SPACE${-o}';
     }
 
-  public function pseudo(p:Pseudo) 
+  public function pseudo(p:Pseudo)
     return switch p {
       case Vendored(s): '::-$s';
       case Dir(s): ':dir($s)';
