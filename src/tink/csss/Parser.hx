@@ -105,7 +105,7 @@ class Parser<Position, Error> extends tink.parse.ParserBase<Position, Error> {
   }
 
   function parseSelectorNext(tag:String) {
-    var ret = { tag: tag, id: null, classes: [], attrs: new Array<AttrFilter>(), pseudos: [] };
+    var ret = { tag: tag, id: (null:String), classes: [], attrs: new Array<AttrFilter>(), pseudos: [] };
     while (true) {
       if (allowHere('#')) {
         if (ret.id != null) die('cannot have multiple ids (already have ${ret.id})');
